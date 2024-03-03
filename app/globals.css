@@ -26,7 +26,17 @@ input:focus, textarea:focus {
   border-color: #FADB5F;
   box-shadow: 0 0 0 1px #FADB5F;
 }
+button {
+  @apply bg-banana-500 text-black font-medium py-2 px-4;
+  @apply rounded-full transition duration-200 ease-in-out; /* Full rounded corners */
+  @apply hover:bg-banana-600 hover:shadow-lg hover:-translate-y-1;
+  @apply focus:outline-none focus:ring-2 focus:ring-banana-400 focus:ring-opacity-50; /* Focus styles */
+  border: 2px solid transparent; /* Retaining border for focus state */
+}
 
+button:focus {
+  @apply outline-none border-banana-400 ring-1 ring-banana-400;
+}
 button:hover {
   transform: translateY(-2px);
 }
