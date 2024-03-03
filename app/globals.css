@@ -1,33 +1,32 @@
+/* globals.css */
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
 
-:root {
-  --foreground-rgb: 0, 0, 0;
-  --background-start-rgb: 214, 219, 220;
-  --background-end-rgb: 255, 255, 255;
-}
-
-@media (prefers-color-scheme: dark) {
-  :root {
-    --foreground-rgb: 255, 255, 255;
-    --background-start-rgb: 0, 0, 0;
-    --background-end-rgb: 0, 0, 0;
-  }
-}
-
 body {
-  color: rgb(var(--foreground-rgb));
-  background: linear-gradient(
-      to bottom,
-      transparent,
-      rgb(var(--background-end-rgb))
-    )
-    rgb(var(--background-start-rgb));
+  background-color: #fff;
+  color: #333;
 }
 
-@layer utilities {
-  .text-balance {
-    text-wrap: balance;
-  }
+a {
+  color: #065f46; /* A shade that should be adjusted based on your palette */
+}
+
+a:hover {
+  color: #064e3b;
+}
+
+/* Custom styles for forms to match the professional Airbnb-like theme */
+input, textarea, button {
+  transition: all 0.2s ease-in-out;
+}
+
+input:focus, textarea:focus {
+  outline: none;
+  border-color: #FADB5F;
+  box-shadow: 0 0 0 1px #FADB5F;
+}
+
+button:hover {
+  transform: translateY(-2px);
 }

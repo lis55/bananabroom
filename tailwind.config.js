@@ -1,4 +1,4 @@
-/** @type {import('tailwindcss').Config} */
+// tailwind.config.js
 module.exports = {
   content: [
     "./pages/**/*.{js,ts,jsx,tsx,mdx}",
@@ -7,10 +7,18 @@ module.exports = {
   ],
   theme: {
     extend: {
-      backgroundImage: {
-        "gradient-radial": "radial-gradient(var(--tw-gradient-stops))",
-        "gradient-conic":
-          "conic-gradient(from 180deg at 50% 50%, var(--tw-gradient-stops))",
+      colors: {
+        banana: {
+          100: '#FFFFF0',
+          200: '#FEF9C3',
+          300: '#FCE588',
+          400: '#FADB5F', // Consider this for focus rings
+          500: '#F7C948', // Primary action elements (buttons)
+          600: '#F0B429', // Button hover states
+          700: '#DE911D',
+          800: '#CB6E17',
+          900: '#B44D12',
+        },
       },
     },
   },
