@@ -40,3 +40,39 @@ button:focus {
 button:hover {
   transform: translateY(-2px);
 }
+
+.language-changer {
+  position: relative;
+  display: inline-block;
+}
+
+.current-language, .languages-dropdown {
+  cursor: pointer;
+  user-select: none;
+}
+
+.current-language {
+  display: flex; /* Aligns the flag and text inline */
+  align-items: center; /* Centers them vertically */
+}
+
+.languages-dropdown {
+  position: absolute;
+  background-color: #f9f9f9;
+  min-width: 160px; /* Adjusted to potentially accommodate flags */
+  box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
+  z-index: 1;
+  display: flex;
+  flex-direction: column; /* Ensures dropdown items stack vertically */
+}
+
+.language-option {
+  padding: 8px 10px;
+  display: flex; /* Keeps flag and text inline */
+  align-items: center; /* Centers flag and text vertically */
+}
+
+.language-option:hover {
+  background-color: #f1f1f1;
+}
+

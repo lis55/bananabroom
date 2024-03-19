@@ -2,6 +2,7 @@
 import { useState } from 'react';
 import Image from 'next/image';
 import BookingForm from './BookingForm';
+import { useTranslation } from 'react-i18next';
 
 const s3Images = {
   cleaning2: '/img/cleaning2.jpg',
@@ -10,6 +11,7 @@ const s3Images = {
 };
 
 export default function HeroSection() {
+  const { t } = useTranslation();
   const [cleaningFormExpanded, setCleaningFormExpanded] = useState(false);
   const [paintingFormExpanded, setPaintingFormExpanded] = useState(false);
 
@@ -22,9 +24,9 @@ export default function HeroSection() {
       <div className="relative mb-16 mt-8"> {/* Adjust mt-8 as needed for more or less space */}
 
         <div className="relative max-w-7xl mx-auto py-12 px-4 sm:py-24 sm:px-6 lg:px-8 text-center">
-          <h1 className="text-4xl font-extrabold tracking-tight sm:text-5xl lg:text-6xl">Welcome to BananaBroom</h1>
+          <h1 className="text-4xl font-extrabold tracking-tight sm:text-5xl lg:text-6xl">{t('welcome')}</h1>
           <p className="mt-6 max-w-lg mx-auto text-xl">
-            Your one-stop destination for all home maintenance needs. From professional cleaning to expert painting, we make your spaces shine.
+            {t('Slogan')}
           </p>
         </div>
       </div>
@@ -36,10 +38,10 @@ export default function HeroSection() {
             <Image src={s3Images.cleaning2} alt="Cleaning Service" width={600} height={400} objectFit="cover" layout="intrinsic" />
           </div>
           <div className="p-4 space-y-2 md:flex-1">
-            <h3 className="text-2xl font-semibold">Professional Cleaning</h3>
-            <p>Keep your home or office sparkling with our top-notch cleaning services.</p>
+            <h3 className="text-2xl font-semibold">{t('Cleaning')}</h3>
+            <p>{t('Slogan cleaning')}</p>
             <button  onClick={toggleCleaningForm}>
-              Book Cleaning
+              {t('Book Cleaning')}
             </button>
             {cleaningFormExpanded && <BookingForm />}
           </div>
@@ -54,9 +56,9 @@ export default function HeroSection() {
           </div>
           <div className="p-4 space-y-2 md:flex-1">
             <h3 className="text-2xl font-semibold">Expert Painting</h3>
-            <p>Transform your space with vibrant colors and expert finishes from our skilled painters.</p>
+            <p>{t('Slogan painting')}</p>
             <button onClick={togglePaintingForm}>
-              Book Painting
+              {('Book Painting')}
             </button>
             {paintingFormExpanded && <BookingForm />}
           </div>
