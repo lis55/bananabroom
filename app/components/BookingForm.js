@@ -1,7 +1,9 @@
 // components/BookingForm.
 'use client'
 import CleaningForm from "./CleaningForm";
-import PaintinForm from "./PaintingForm"
+import PaintingServiceForm from "./PaintingForm";
+import SitterServiceForm from "./SitterForm"
+
 
 
 export default function BookingForm({serviceType}) {
@@ -21,7 +23,7 @@ if (serviceType==2){
   return (
   <div className="iframe-container">
     {/* <iframe src={googleFormUrl} title="Painting Form" frameborder="2" width="100%" height="820"></iframe> */}
-  <PaintinForm/>
+  <PaintingServiceForm/>
   </div>
 );
 }
@@ -31,7 +33,7 @@ if (serviceType==2){
   return (
   <div className="iframe-container">
     {/* <iframe src={googleFormUrl} title="Painting Form" frameborder="2" width="100%" height="820"></iframe> */}
-  <SitterForm/>
+  <SitterServiceForm/>
   </div>
 );
 }
