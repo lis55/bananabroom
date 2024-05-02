@@ -4,6 +4,7 @@
 @tailwind utilities;
 
 body {
+  margin-top: 60px;
   background-color: #fff;
   color: #333;
 }
@@ -27,12 +28,16 @@ input:focus, textarea:focus {
   box-shadow: 0 0 0 1px #FADB5F;
 }
 button {
-  @apply bg-banana-500 text-black font-medium py-2 px-4;
+  @apply bg-banana-500 text-black font-medium py-1 px-3 mx-2;
   @apply rounded-full transition duration-200 ease-in-out; /* Full rounded corners */
   @apply hover:bg-banana-600 hover:shadow-lg hover:-translate-y-1;
   @apply focus:outline-none focus:ring-2 focus:ring-banana-400 focus:ring-opacity-50; /* Focus styles */
   border: 2px solid transparent; /* Retaining border for focus state */
 }
+button:disabled {
+  @apply opacity-50 cursor-not-allowed; /* Additional styles for disabled state */
+}
+
 
 button:focus {
   @apply outline-none border-banana-400 ring-1 ring-banana-400;
@@ -41,10 +46,7 @@ button:hover {
   transform: translateY(-2px);
 }
 
-.language-changer {
-  position: relative;
-  display: inline-block;
-}
+
 
 .current-language, .languages-dropdown {
   cursor: pointer;
@@ -55,7 +57,19 @@ button:hover {
   display: flex; /* Aligns the flag and text inline */
   align-items: center; /* Centers them vertically */
 }
-
+nav {
+  background-color: white; /* equivalent to bg-white */
+  padding: 0.5rem; /* equivalent to p-5 */
+  box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05); /* equivalent to shadow-md */
+  position: fixed; /* equivalent to fixed */
+  top: 0; /* equivalent to top-0 */
+  width: 100%; /* equivalent to w-full */
+  z-index: 10; /* equivalent to z-10 */
+}
+.language-changer {
+  position: relative;
+  display: inline-block;
+}
 .languages-dropdown {
   position: absolute;
   background-color: #f9f9f9;

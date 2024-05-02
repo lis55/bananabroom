@@ -1,39 +1,55 @@
 // Navbar.
-'use client'
-import { useSession, signIn, signOut } from "next-auth/react"
-import Image from 'next/image';
-import LanguageChanger from './LanguageChanger'
-import { useTranslation } from 'react-i18next';
+"use client";
+import { useSession, signIn, signOut } from "next-auth/react";
+import Image from "next/image";
+import LanguageChanger from "./LanguageChanger";
+import { useTranslation } from "react-i18next";
+import Link from "next/link";
+import { useRouter } from "next/navigation";
 
 export default function Navbar() {
-  const { data: session } = useSession()
+  const { data: session } = useSession();
   const { t } = useTranslation();
-  
-  const logoSrc = '/img/logo.jpg';
-  
+  const router =useRouter()
+
+  const logoSrc = "/img/logo.jpg";
+
   return (
-    <nav className="bg-white p-5 shadow-md fixed top-0 w-full z-10">
+    <nav>
       <div className="max-w-6xl mx-auto flex justify-between items-center">
-        
         {/* Logo on the left */}
-        <Image src={logoSrc} alt="Logo" width={100} height={100} className="rounded-full"/>
-        
+        <Image
+          src={logoSrc}
+          alt="Logo"
+          width={100}
+          height={100}
+          className="rounded-full"
+        />
+
         {/* Title centered */}
-        <h1 className="text-2xl font-semibold text-gray-800 flex-grow text-center">BananaBroom</h1>
-        
+        <Link
+          className="text-2xl font-semibold text-gray-800 flex-grow text-center"
+          href="/"
+        >
+          BananaBroom
+        </Link>
+
         {/* SignIn/Out and LanguageChanger on the right */}
-        <div className="flex items-center">
+        
           {session ? (
-            <button className="text-gray-800 bg-transparent hover:bg-gray-100 font-semibold py-2 px-4 mr-2 border border-gray-400 rounded-full transition duration-200 ease-in-out" onClick={() => signOut()}>
-              {t('SignOut')}
-            </button>
+            <>
+              <button onClick={() => router.push("/account")}>{t("My account")}</button>
+              <button onClick={() => router.push("/providerform")}>{t("Work with us")}</button>
+              <button onClick={() => signOut()}>{t("SignOut")}</button>
+            </>
           ) : (
-            <button className="text-gray-800 bg-transparent hover:bg-gray-100 font-semibold py-2 px-4 mr-3 border border-gray-400 rounded-full transition duration-200 ease-in-out" onClick={() => signIn()}>
-              {t('SignIn')}
-            </button>
+            <>
+            <button onClick={() => signIn()}>{t("SignIn")}</button>
+            <button onClick={() => router.push("/")}>{t("Work with us")}</button>
+            </>
           )}
-          <LanguageChanger/>
-        </div>
+        
+        <LanguageChanger />
       </div>
     </nav>
   );

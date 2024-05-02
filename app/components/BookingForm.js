@@ -1,11 +1,40 @@
-// components/BookingForm.js
-export default function BookingForm() {
-  const googleFormUrl = process.env.NEXT_PUBLIC_GOOGLE_FORM;
+// components/BookingForm.
+'use client'
+import CleaningForm from "./CleaningForm";
+import PaintinForm from "./PaintingForm"
 
-  return (
+
+export default function BookingForm({serviceType}) {
+  const googleFormUrl = process.env.NEXT_PUBLIC_GOOGLE_FORM;
+if (serviceType==1){
+
+    return (
     <div className="iframe-container">
-      <iframe src={googleFormUrl} title="Painting Form" frameborder="0" width="100%" height="520"></iframe>
+      {/* <iframe src={googleFormUrl} title="Painting Form" frameborder="2" width="100%" height="820"></iframe> */}
+    <CleaningForm/>
     </div>
   );
+}
+
+if (serviceType==2){
+
+  return (
+  <div className="iframe-container">
+    {/* <iframe src={googleFormUrl} title="Painting Form" frameborder="2" width="100%" height="820"></iframe> */}
+  <PaintinForm/>
+  </div>
+);
+}
+
+if (serviceType==2){
+
+  return (
+  <div className="iframe-container">
+    {/* <iframe src={googleFormUrl} title="Painting Form" frameborder="2" width="100%" height="820"></iframe> */}
+  <SitterForm/>
+  </div>
+);
+}
+
   }
   

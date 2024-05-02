@@ -1,6 +1,6 @@
 function ContactForm() {
   return (
-    <div className="mt-8 bg-white p-6 rounded-lg shadow">
+    <div >
       <h2 className="text-3xl font-bold text-gray-800 mb-4">Contact Us</h2>
       <form className="space-y-6" name="contact" method="POST" data-netlify="true">
         <input type="hidden" name="form-name" value="contact" />
