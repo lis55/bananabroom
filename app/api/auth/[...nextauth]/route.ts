@@ -22,12 +22,12 @@ const handler = NextAuth({
     session: async ({ session, user, token }) => {
       // Send properties to the client, like an access_token and user id from a provider.
       session.accessToken = token.accessToken as string
-      if (user){
+      if (session.user){
         session.user.id = token.id as string
       }
       
       
-      
+      console.log("AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA ", session.user)
       return session
     },
   
@@ -47,6 +47,7 @@ const handler = NextAuth({
       }
       
       }
+      
       
       return token
     },

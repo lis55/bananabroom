@@ -10,7 +10,7 @@ import ReviewForm from './ReviewForm';
 const defaultProfilePicture = '/img/default-pic.jpg';
 
 export default function AccountManagement() {
-  const { t } = useTranslation();
+  const { t } = useTranslation('MyAccount');
   const { data: session } = useSession();
   const [bookings, setBookings] = useState([]);
   const router = useRouter();
@@ -25,14 +25,14 @@ export default function AccountManagement() {
     setShowModal(false);
     setCurrentBooking(null);
   };  
-
+console.log("Token BBBBBBBBBBBBB", session)
  
   useEffect(() => {
     const fetchBookings = async () => {
       try {
-        const result = await axios.get(`${process.env.NEXT_PUBLIC_STRAPI_URL}/api/bookings?filters[users_permissions_user][id]=${session?.user.id}&populate[services]=*`, {
+        const result = await axios.get(`${process.env.NEXT_PUBLIC_STRAPI_URL}/api/bookings?populate[users_permissions_user]=*&populate[services]=*&filters[users_permissions_user][id]=${session?.user.id}`, {
           headers: {
-            Authorization: `Bearer ${session?.accessToken}`,
+            Authorization: `Bearer ${session.accessToken}`,
           },
         });
         setBookings(result.data.data);
@@ -44,9 +44,10 @@ export default function AccountManagement() {
     if (session?.user) {
       fetchBookings();
     }
-  }, [session]);
-  console.log("Bookings: ",bookings[0])
- 
+
+  }, [session,bookings]);
+
+
   const profilePicture = session?.user?.image || defaultProfilePicture;
 
   return (
@@ -54,22 +55,22 @@ export default function AccountManagement() {
       <div className="bg-white shadow-md rounded-lg overflow-hidden mb-8">
         <div className="flex flex-col md:flex-row items-start">
           <div className="flex flex-1 flex-col items-center md:items-start md:pr-8 p-4">
-            <img src={session?.user?.image || '/img/default-profile.jpg'} alt="Profile Picture" className="rounded-full w-24 h-24 mb-4 object-cover" />
+            <Image src={session?.user?.image || '/img/default-profile.jpg'} alt="Profile Picture" width={90} height={90} className="rounded-full mb-4 object-cover" />
             <h3 className="text-2xl font-semibold">{session?.user?.name || 'User'}</h3>
-            <p className="text-sm text-gray-600">{t('This is your account dashboard where you can manage your settings and bookings.')}</p>
+            <p className="text-sm text-gray-600">{t('Account management description')}</p>
             <button  onClick={() => router.push('/settings')}>
               {t('Manage Settings')}
             </button>
           </div>
           <div className="flex-1 p-4">
-            <h4 className="text-lg font-semibold mb-3">{t('Your Bookings')}</h4>
+            <h4 className="text-lg font-semibold mb-3">{t('Your bookings')}</h4>
             {bookings.length > 0 ? bookings.map(booking => (
               <div key={booking.id} className="p-2 bg-gray-100 rounded-md shadow-sm mb-2">
                 <p>
-                  {booking.attributes.services.data[0].attributes.type} on:   
+                  {t(booking.attributes.services.data[0].attributes.type)} {t('on')}   
                   {new Date(booking.attributes.date).toLocaleDateString('en-US', {
                     year: 'numeric', month: 'long', day: 'numeric'
-                  })} at 
+                  })} {t('at')}
                   {new Date(booking.attributes.date).toLocaleTimeString('en-US', {
                     hour: '2-digit', minute: '2-digit', hour12: true
                   })}
@@ -81,7 +82,7 @@ export default function AccountManagement() {
                   {t('Review Booking')}
                 </button>
               </div>
-            )) : <p>{t('No bookings found.')}</p>}
+            )) : <p>{t('No bookings')}</p>}
           </div>
         </div>
       </div>

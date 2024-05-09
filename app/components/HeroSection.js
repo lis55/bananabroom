@@ -4,7 +4,7 @@ import Image from 'next/image';
 import { useTranslation } from 'react-i18next';
 import BookingForm from './BookingForm';
 import { useRouter } from 'next/navigation'
-import Review from './ReviewForm';
+
  
 // Assuming you have environment variables for your Google Form URLs
 const cleaningFormUrl = process.env.NEXT_PUBLIC_GOOGLE_FORM;
@@ -103,7 +103,7 @@ export default function HeroSection() {
             <h3 className="text-2xl font-semibold">{t('Dogsitter and catsitter')}</h3>
             <p>{t('Slogan sitter')}</p>
             <button onClick={() => openModalWithForm(paintingFormUrl,3)}>
-              {t('Book dogsitter')}
+              {t('Book animal care')}
             </button>
             <button onClick={() => router.push("/staff")}>
               {t('Meet our staff')}

@@ -8,7 +8,7 @@ import initTranslations from '../i18n';
 
 
 const inter = Inter({ subsets: ["latin"] });
-const i18nNamespaces = ['Home'];
+const i18nNamespaces = ['Home', 'MyAccount'];
 
 /* export const metadata = {
   title: "BananaBroom cleaning and paiting service",

@@ -3,6 +3,7 @@ import { useEffect } from "react";
 import { useSearchParams } from "next/navigation";
 import axios from "axios";
 import { useSession } from "next-auth/react";
+import Image from "next/image";
 
 export default function Home() {
   const searchParams = useSearchParams();
@@ -43,7 +44,7 @@ export default function Home() {
     <div className="container mx-auto pt-12">
       <div className="bg-white shadow-md rounded-lg overflow-hidden">
         <div className="max-w-7xl mx-auto py-12 px-4 sm:px-6 lg:px-8">
-          <img src="/img/banana.jpg" alt="Booking Successful" className="w-full h-auto" />
+          <Image src="/img/banana.jpg" alt="Booking Successful" width={700} height ={700} className="h-auto" />
           <h1 className="text-2xl font-semibold text-center mb-6">Booking Successful</h1>
           <h2 className="text-1xl font-semibold text-center mb-6">Congratulations! you are one step closer to an impecable home</h2>
           <div className="space-y-4">

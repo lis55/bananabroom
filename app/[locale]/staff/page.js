@@ -3,6 +3,7 @@ import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import { useTranslation } from 'react-i18next';
 import StarRatingComponent from 'react-star-rating-component';
+import Image from 'next/image';
 
 const ProvidersPage = () => {
   const [providers, setProviders] = useState([]);
@@ -64,7 +65,7 @@ const ProvidersPage = () => {
             {providersByCategory[category].map((provider, index) => (
               <div key={index} className="bg-white shadow-md rounded-lg p-4 flex flex-col">
                 <div className="flex items-center">
-                  <img src={provider.attributes.profile_picture ? provider.attributes.profile_picture.data.attributes.url : '/img/default-pic.jpg'} alt={provider.attributes.name} className="w-25 h-24 rounded-full mr-4" />
+                  <Image src={provider.attributes.profile_picture ? provider.attributes.profile_picture.data.attributes.url : '/img/default-pic.jpg'} alt={provider.attributes.name} width={150} height={150} className="rounded-full mr-4" />
                   <div>
                     <h3 className="text-2xl font-semibold">{t(provider.attributes.name)}</h3>
                     <ul>

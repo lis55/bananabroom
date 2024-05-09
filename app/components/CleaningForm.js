@@ -59,9 +59,22 @@ const CleaningForm = () => {
       zone: Yup.string().required("Zone is required"),
       address: Yup.string().required("Address is required"),
       date: Yup.date()
-        .min(today, "Date cannot be in the past")
-        .required("Date is required"),
-      time: Yup.string().required("Time is required"),
+       .min(today, "Date cannot be in the past")
+       .required("Date is required"),
+      time: Yup.string()
+       .required("Time is required")
+       .test(
+          "time-range",
+          "Time must be between 7:00 and 18:00",
+          (value) => {
+            const time = new Date(`2022-01-01T${value}:00`);
+            const startTime = new Date("2022-01-01T07:00:00");
+            const endTime = new Date("2022-01-01T18:00:00");
+            console.log(time, startTime, endTime, time >= startTime && time <= endTime);
+
+            return time >= startTime && time <= endTime;
+          }
+        ),
       serviceId: Yup.string().required("Service type is required"), // Updated from cleaning_type to serviceId
     }),
 
@@ -129,9 +142,9 @@ const CleaningForm = () => {
           ))}
         </select>
 
-        {formik.touched.cleaning_type && formik.errors.cleaning_type && (
+        {formik.touched.serviceId && formik.errors.serviceId && (
           <div className="text-red-500 text-xs">
-            {formik.errors.cleaning_type}
+            {formik.errors.serviceId}
           </div>
         )}
       </div>
@@ -154,6 +167,9 @@ const CleaningForm = () => {
             </option>
           ))}
         </select>
+        {formik.touched.zone && formik.errors.zone && (
+          <div className="text-red-500 text-xs">{formik.errors.zone}</div>
+        )}
       </div>
 
       <div className="relative">
@@ -171,14 +187,18 @@ const CleaningForm = () => {
       <div>
         <p className="text-x2 font-semibold">{t("Date")}</p>
         <DatePicker
-          className="w-full p-2 border border-gray-300 rounded-md focus:ring focus:ring-yellow-500 focus:border-yellow-500"
+          className="w-full p-2 border border-banana-300 rounded-md focus:ring focus:ring-banana-500 focus:border-banana-500"
           selected={formik.values.date}
           onChange={(date) => {
             const formattedDate = date.toISOString().split("T")[0]; // YYYY-MM-DD format
             formik.setFieldValue("date", formattedDate);
           }}
+          minDate={today}
           dateFormat="yyyy-MM-dd"
         />
+        {formik.touched.date && formik.errors.date && (
+          <div className="text-red-500 text-xs">{formik.errors.date}</div>
+        )}
       </div>
       <div>
         <p className="text-x2 font-semibold">{t("Time")}</p>
@@ -189,6 +209,9 @@ const CleaningForm = () => {
           value={formik.values.time}
           className="w-full p-2 border border-gray-300 rounded-md focus:ring focus:ring-yellow-500 focus:border-yellow-500"
         />
+        {formik.touched.time && formik.errors.time && (
+          <div className="text-red-500 text-xs">{formik.errors.time}</div>
+        )}
       </div>
       <div>
         <p className="text-x2 font-semibold">Total amount to pay:</p>

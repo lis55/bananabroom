@@ -7,11 +7,10 @@ import ClientStripeWrapper from'../components/StripeWrapper'
 
 
 
-const i18nNamespaces = ['Home'];
+const i18nNamespaces = ['Home', 'MyAccount'];
 
 export default async function Home({ params: { locale } }) {
   const { t, resources } = await initTranslations(locale, i18nNamespaces);
-  
   return (
     <TranslationsProvider
     namespaces={i18nNamespaces}

@@ -4,6 +4,7 @@ import { useRouter } from 'next/navigation';
 import { usePathname } from 'next/navigation';
 import { useTranslation } from 'react-i18next';
 import i18nConfig from '../../i18nConfig';
+import Image from 'next/image';
 
 export default function LanguageChanger() {
   const { i18n } = useTranslation();
@@ -41,7 +42,7 @@ export default function LanguageChanger() {
   return (
     <div className="language-changer">
       <div className="current-language" onClick={() => setIsOpen(!isOpen)}>
-        <img src={languages.find(lang => lang.code === currentLocale).flagUrl} alt="" width="30" height="25" style={{ marginRight: '8px' }} />
+        <Image src={languages.find(lang => lang.code === currentLocale).flagUrl} alt="" width="30" height="25" style={{ marginRight: '8px' }} />
         {languages.find(lang => lang.code === currentLocale).name}
         <span className="caret">▼</span>
       </div>
@@ -49,7 +50,7 @@ export default function LanguageChanger() {
         <div className="languages-dropdown">
           {languages.map(lang => (
             <div key={lang.code} className="language-option" onClick={() => handleChange(lang.code)}>
-              <img src={lang.flagUrl} alt="" width="30" height="25" style={{ marginRight: '8px' }} />
+              <Image src={lang.flagUrl} alt="" width="30" height="25" style={{ marginRight: '8px' }} />
               {lang.name}
             </div>
           ))}
