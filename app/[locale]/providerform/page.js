@@ -1,15 +1,19 @@
 "use client";
-import React from "react";
+import React, { useState } from "react";
 import { useFormik } from "formik";
 import * as Yup from "yup";
 import { useTranslation } from "react-i18next";
 import axios from "axios";
 import { DropzoneArea } from "material-ui-dropzone";
 import { useSession } from "next-auth/react";
+import { useRouter } from "next/navigation";
 
 const ServiceProviderRegistrationForm = () => {
   const { t } = useTranslation();
   const session = useSession();
+  const router = useRouter();
+  const [errorMessage, setErrorMessage] = useState("");
+
   const languagesOptions = [
     "English",
     "German",
@@ -25,6 +29,11 @@ const ServiceProviderRegistrationForm = () => {
     "Dogsitting",
     "Catsitting"
   ]
+  const dictionaryService = {
+    "Cleaning": 1,
+    "Dogsitting": 2,
+    "Catsitting": 3
+  }
 
   const formik = useFormik({
     initialValues: {
@@ -50,8 +59,35 @@ const ServiceProviderRegistrationForm = () => {
       profilePicture: Yup.mixed().required(t("Profile picture is required")),
     }),
     onSubmit: async (values) => {
+      setErrorMessage(""); // Clear any existing error messages
+      const mappedServices = values.services.map(
+        (service) => dictionaryService[service]
+      );
+
+      // Step 1: Upload image to Cloudinary
+      const formData2 = new FormData();
+      formData2.append('files', values.profilePicture); // Ensure the key is 'files'
+      console.log("Form data before image upload:", formData2);
+
+      let uploadResponse;
+      try {
+        uploadResponse = await axios.post(`${process.env.NEXT_PUBLIC_STRAPI_URL}/api/upload`,
+          formData2,
+          {
+            headers: {
+              Authorization: `Bearer ${session.data.accessToken}`,
+            },
+          });
+        console.log(uploadResponse.data);
+      } catch (error) {
+        setErrorMessage('Error uploading image. Please try again.');
+        return;
+      }
+
+      const imageId = uploadResponse.data[0].id;
+
       const formData = new FormData();
-      //formData.append('files.profile_picture', values.profilePicture);
+      formData.append('files.profilepic', values.profilePicture);
       formData.append(
         "data",
         JSON.stringify({
@@ -60,14 +96,15 @@ const ServiceProviderRegistrationForm = () => {
           city: values.city,
           languages: values.languages,
           services: {
-            connect: values.services,
-        },
+            connect: mappedServices,
+          },
           users_permissions_user: {
-            connect: [session.user?.id]
-        }
+            connect: [session.data.user.id]
+          },
+          profilepic: imageId
         }),
       );
-      //make a post equest of formData to post-provider route with error
+
       console.log("Form data", formData);
       try {
         const response = await axios.post(
@@ -80,8 +117,9 @@ const ServiceProviderRegistrationForm = () => {
           },
         );
         console.log("Service Provider Created: ", response.data);
+        router.push("/successfulprovider"); // Redirect to success page
       } catch (error) {
-        console.error("Error creating service provider:", error);
+        setErrorMessage('Error creating service provider. Please try again.');
       }
     },
   });
@@ -98,6 +136,9 @@ const ServiceProviderRegistrationForm = () => {
         <h2 className="text-3xl font-bold mb-6 text-center">
           {t("Register as a new service provider")}
         </h2>
+        {errorMessage && (
+          <div className="text-red-500 text-xs mb-4">{errorMessage}</div>
+        )}
         <div className="mb-4">
           <label
             htmlFor="about"
@@ -169,7 +210,7 @@ const ServiceProviderRegistrationForm = () => {
               <label>
                 <input
                   type="checkbox"
-                  name="languages"
+                  name="services"
                   value={serv}
                   checked={formik.values.services.includes(serv)}
                   onChange={formik.handleChange}
@@ -178,9 +219,9 @@ const ServiceProviderRegistrationForm = () => {
               </label>
             </div>
           ))}
-          {formik.touched.languages && formik.errors.languages ? (
+          {formik.touched.services && formik.errors.services ? (
             <div className="text-red-500 text-xs">
-              {formik.errors.languages}
+              {formik.errors.services}
             </div>
           ) : null}
         </div>
