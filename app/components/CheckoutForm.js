@@ -24,7 +24,7 @@ const CheckoutForm = ({service,address,dateTime,servicePrice}) => {
 
     try {
       const { data } = await axios.post('/api/create-checkout-session', {
-        bookingData: {
+        metadata: {
           user: session.user.email,
           service,
           address,

@@ -35,9 +35,7 @@ export async function POST(req: NextRequest) {
       currency: 'usd',
       customer_creation: 'always',  
       success_url: `${process.env.NEXTAUTH_URL}/successfulbooking?session_id={CHECKOUT_SESSION_ID}`,
-      metadata: {
-        bookingData: JSON.stringify(data.bookingData), // Add your booking data here
-      },
+
     });
 
     return NextResponse.json(session, { status: 200 });
