@@ -13,6 +13,7 @@ const ServiceProviderRegistrationForm = () => {
   const session = useSession();
   const router = useRouter();
   const [errorMessage, setErrorMessage] = useState("");
+  console.log("Session", session);
 
   const languagesOptions = [
     "English",
@@ -107,7 +108,7 @@ const ServiceProviderRegistrationForm = () => {
 
       console.log("Form data", formData);
       try {
-        const response = await axios.post(
+        let response = await axios.post(
           `${process.env.NEXT_PUBLIC_STRAPI_URL}/api/service-providers`,
           formData,
           {
@@ -117,9 +118,12 @@ const ServiceProviderRegistrationForm = () => {
           },
         );
         console.log("Service Provider Created: ", response.data);
+        console.log("Service Provider Created: ", response.data.data.id);
+        
         router.push("/successfulprovider"); // Redirect to success page
       } catch (error) {
         setErrorMessage('Error creating service provider. Please try again.');
+        console.log("Could not create service provider", error);
       }
     },
   });

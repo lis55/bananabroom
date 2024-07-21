@@ -10,7 +10,7 @@ import { useRouter } from "next/navigation";
 export default function Navbar() {
   const { data: session } = useSession();
   const { t } = useTranslation();
-  const router =useRouter()
+  const router = useRouter();
 
   const logoSrc = "/img/logo.jpg";
 
@@ -35,20 +35,36 @@ export default function Navbar() {
         </Link>
 
         {/* SignIn/Out and LanguageChanger on the right */}
-        
-          {session ? (
+
+        {session ? (
+          session.user.service_provider == null ? (
             <>
-              <button onClick={() => router.push("/account")}>{t("My account")}</button>
-              <button onClick={() => router.push("/providerform")}>{t("Work with us")}</button>
+              <button onClick={() => router.push("/account")}>
+                {t("My account")}
+              </button>
+              <button onClick={() => router.push("/providerform")}>
+                {t("Work with us")}
+              </button>
               <button onClick={() => signOut()}>{t("SignOut")}</button>
             </>
           ) : (
             <>
-            <button onClick={() => signIn()}>{t("SignIn")}</button>
-            <button onClick={() => router.push("/")}>{t("Work with us")}</button>
+              <button onClick={() => router.push("/account")}>
+                {t("My account")}
+              </button>
+              <button onClick={() => router.push("/provider-account")}>
+                {t("My work")}
+              </button>
+              <button onClick={() => signOut()}>{t("SignOut")}</button>
             </>
-          )}
-        
+          )
+        ) : (
+          <>
+            <button onClick={() => signIn()}>{t("SignIn")}</button>
+            <button onClick={() => router.push("/")}>{t("Home")}</button>
+          </>
+        )}
+
         <LanguageChanger />
       </div>
     </nav>

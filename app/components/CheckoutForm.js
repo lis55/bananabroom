@@ -21,55 +21,28 @@ const CheckoutForm = ({service,address,dateTime,servicePrice}) => {
   const handleSubmit = async (event) => {
     event.preventDefault();
     setLoading(true);
+
     try {
-      if (!stripe || !elements) return null;
-      elements.submit()
-
-      const { data } = await axios.post("/api/create-payment-intent", {
-        data: { amount: servicePrice },
-      });
-      const clientSecret = data;
-      const headers = {
-        Authorization: `Bearer ${session.accessToken}`,
-      };
-      console.log(data)
-      console.log("Session id: ",session.user?.id)
-      const response = await axios.post(`${process.env.NEXT_PUBLIC_STRAPI_URL}/api/bookings`, {
-        "data": {
-          services: {
-            connect: [service]
-        },
-        zone: {
-          connect: [3]
-          },
-          address: address,
-          date: "2024-04-09T22:15:00.000Z",
-          payment_intent: clientSecret,
-          paymentStatus: "pending",
-          users_permissions_user: {
-            connect: [session.user?.id]
+      const { data } = await axios.post('/api/create-checkout-session', {
+        bookingData: {
+          user: session.user.email,
+          service,
+          address,
+          dateTime: strapiTime,
+          servicePrice,
         }
-        }
-      },  { headers });
-      
-      console.log("The booking id is: ", response.data.data)
-
-      const paymentResult = await stripe?.confirmPayment({
-        clientSecret,
-        elements,
-        confirmParams: {
-          return_url: `${window.location.origin}/successfulbooking?id=${response.data.data.id}&address=${encodeURIComponent(address)}&dateTime=${encodeURIComponent(dateTime)}`,
-        },      
       });
+
+      window.location.href = data.url;
     } catch (error) {
       console.log(error);
+      setLoading(false);
     }
-    setLoading(false)
   };
 
     return (
     <form onSubmit={handleSubmit}>
-      <PaymentElement/>
+      <p>You can only cancel or reschedule your booking upto 3 days before the booking date. You will be charged the following amount 3 days before the booking date. </p>
       <p>Price: {servicePrice} eur </p>
       <button disabled={loading} >{loading ? "Processing" : "Pay"}</button>
     </form>

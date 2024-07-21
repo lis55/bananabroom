@@ -54,7 +54,7 @@ const ProvidersPage = () => {
       <div className="mb-4 flex space-x-2 justify-center">
         {cities.map((city, index) => (
           <button key={index} onClick={() => handleCityClick(city)} >
-            {t(city)}
+            {city}
           </button>
         ))}
       </div>
