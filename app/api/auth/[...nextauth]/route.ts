@@ -1,7 +1,6 @@
 import NextAuth from "next-auth";
 import GoogleProvider from "next-auth/providers/google";
-import GitHubProvider from 'next-auth/providers/github';
-import nodemailer from 'nodemailer';
+import GitHubProvider from "next-auth/providers/github";
 import fetch from 'node-fetch';
 
 async function getAccessToken() {
@@ -30,20 +29,49 @@ async function getAccessToken() {
   return tokens.access_token;
 }
 
+async function sendWelcomeEmail(userEmail) {
+  const accessToken = await getAccessToken();
+  const nodemailer = await import('nodemailer'); // Dynamically import Nodemailer
 
+  const transporter = nodemailer.createTransport({
+    service: 'gmail',
+    auth: {
+      type: 'OAuth2',
+      user: process.env.EMAIL,
+      clientId: process.env.GOOGLE_CLIENT_ID,
+      clientSecret: process.env.GOOGLE_CLIENT_SECRET,
+      refreshToken: process.env.GOOGLE_REFRESH_TOKEN,
+      accessToken: accessToken,
+    },
+    tls: {
+      rejectUnauthorized: false,
+    },
+  });
+
+  await transporter.sendMail({
+    from: process.env.EMAIL,
+    to: userEmail,
+    subject: 'Welcome to BananaBroom',
+    text: 'We make your space shine',
+    html: '<p>We make your space shine</p>',
+  }).catch(error => {
+    console.error("Error sending email: ", error.message);
+    console.error("Stack trace: ", error.stack);
+  });
+}
 
 const handler = NextAuth({
   secret: process.env.NEXTAUTH_SECRET,
-     providers: [
+  providers: [
     GoogleProvider({
       clientId: process.env.GOOGLE_CLIENT_ID,
       clientSecret: process.env.GOOGLE_CLIENT_SECRET,
       authorization: {
         params: {
           access_type: 'offline',
-          prompt: 'consent'
-        }
-      }
+          prompt: 'consent',
+        },
+      },
     }),
     GitHubProvider({
       clientId: process.env.GITHUB_ID,
@@ -51,82 +79,33 @@ const handler = NextAuth({
     }),
   ],
   session: {
-    strategy: "jwt"
+    strategy: "jwt",
   },
   callbacks: {
-    session: async ({ session, user, token }) => {
-      // Send properties to the client, like an access_token and user id from a provider.
-      session.accessToken = token.accessToken as string
-      if (session.user){
-        session.user.id = token.id as string
+    session: async ({ session, token }) => {
+      session.accessToken = token.accessToken;
+      if (session.user) {
+        session.user.id = token.id;
       }
-      
-      
-      //console.log("AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA ", session.user)
-      return session
+      return session;
     },
-    
-  
-    jwt: async( { token, account, profile }) =>{
-      // Persist the OAuth access_token and or the user id to the token right after signin
-      if (account){
-
-      try {
-        const response = await fetch(
-          `${process.env.NEXT_PUBLIC_STRAPI_URL}/api/auth/google/callback?access_token=${account.access_token}`
-        );
-        const data = await response.json();
-        console.log("AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA ", account)
-        token.accessToken = data.jwt;
-        token.id = data.user.id;
-        token.refreshToken = account.refresh_token; // Capture and store the refresh token
-        token.accessToken = account.accessToken;
-        //token.refreshToken = newToken.refreshToken;
-        console.log("AAAAAAAAAAAAAAAAAAABBBBBBBBBBBBBBBBBBBAAAAAAAAA ", token)
-      } catch (error) {
-        console.log('There was an error', error);
+    jwt: async ({ token, account }) => {
+      if (account) {
+        token.accessToken = account.access_token;
+        token.refreshToken = account.refresh_token;
+        token.id = account.id;
       }
-      
-      }
-      
-      
-      return token
+      return token;
     },
-    signIn: async ({ user, account, profile, email, credentials }) => {
+    signIn: async ({ user }) => {
+      // Trigger asynchronous email sending
+      sendWelcomeEmail(user.email)
+        .then(() => console.log("Welcome email sent"))
+        .catch((error) => console.error("Error sending email", error));
 
-      const accessToken = await getAccessToken()
-      const transporter = nodemailer.createTransport({
-        service: 'gmail',
-        auth: {
-          type: 'OAuth2',
-          user: process.env.EMAIL,
-          clientId: process.env.GOOGLE_CLIENT_ID,
-          clientSecret: process.env.GOOGLE_CLIENT_SECRET,
-          refreshToken:process.env.GOOGLE_REFRESH_TOKEN,
-          //refreshToken: tokens.refresh_token,
-          accessToken: accessToken,
-
-        },
-        tls: {
-          rejectUnauthorized: false
-        }
-      });
-      await transporter.sendMail({
-        from: process.env.EMAIL,
-        to: user.email,
-        subject: 'Welcome to BananaBroom',
-        text: 'We make your space shine',
-        html: '<p>We make your space shine</p>',
-      }).catch(error => {
-        console.error("Error sending email: ", error.message);
-        console.error("Stack trace: ", error.stack);
-      });
-      
-      
-
-      return true; // Return true to indicate successful sign in
+      return true; // Continue sign-in flow without waiting for email to send
     },
-  },  
-})
+  },
+});
 
-export { handler as GET, handler as POST }
+export { handler as GET, handler as POST };
