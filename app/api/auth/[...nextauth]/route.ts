@@ -82,28 +82,30 @@ const handler = NextAuth({
     strategy: "jwt",
   },
   callbacks: {
-    session: async ({ session, token }) => {
+    async session({ session, token }) {
       session.accessToken = token.accessToken as string;
       if (session.user) {
         session.user.id = token.id as string;
       }
       return session;
     },
-    jwt: async ({ token, account }) => {
-      if (account) {
+    async jwt({ token, account, user }) {
+      // On initial sign-in, send welcome email
+      if (account && user) {
+        // Only send the email on the first sign-in
+        if (!token.emailSent) {
+          await sendWelcomeEmail(user.email);
+          token.emailSent = true; // Mark that the email has been sent
+        }
         token.accessToken = account.access_token;
         token.refreshToken = account.refresh_token;
-        token.id = account.id;
+        token.id = user.id;
       }
       return token;
     },
-    signIn: async ({ user }) => {
-      // Trigger asynchronous email sending
-      sendWelcomeEmail(user.email)
-        .then(() => console.log("Welcome email sent"))
-        .catch((error) => console.error("Error sending email", error));
-
-      return true; // Continue sign-in flow without waiting for email to send
+    async signIn({ user }) {
+      // You can return true to allow the sign-in process to continue
+      return true;
     },
   },
 });
