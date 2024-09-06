@@ -83,9 +83,9 @@ const handler = NextAuth({
   },
   callbacks: {
     session: async ({ session, token }) => {
-      session.accessToken = token.accessToken;
+      session.accessToken = token.accessToken as string;
       if (session.user) {
-        session.user.id = token.id;
+        session.user.id = token.id as string;
       }
       return session;
     },
