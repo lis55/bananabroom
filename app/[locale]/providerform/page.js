@@ -69,6 +69,7 @@ const ServiceProviderRegistrationForm = () => {
       const formData2 = new FormData();
       formData2.append('files', values.profilePicture); // Ensure the key is 'files'
       console.log("Form data before image upload:", formData2);
+      console.log("Access token:", session?.data.accessToken);
 
       let uploadResponse;
       try {
@@ -76,7 +77,7 @@ const ServiceProviderRegistrationForm = () => {
           formData2,
           {
             headers: {
-              Authorization: `Bearer ${session.data.accessToken}`,
+              Authorization: `Bearer ${session?.data.accessToken}`,
             },
           });
         console.log(uploadResponse.data);
@@ -113,7 +114,7 @@ const ServiceProviderRegistrationForm = () => {
           formData,
           {
             headers: {
-              Authorization: `Bearer ${session.data.accessToken}`,
+              Authorization: `Bearer ${session?.data.accessToken}`,
             },
           },
         );

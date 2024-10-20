@@ -29,6 +29,23 @@ async function getAccessToken() {
   return tokens.access_token;
 }
 
+async function checkIfUserExistsInStrapi(account) {
+  // Use the account access token obtained from the OAuth provider (Google or GitHub)
+  const response = await fetch(`${process.env.NEXT_PUBLIC_STRAPI_URL}/users/me`, {
+    method: 'GET',
+    headers: {
+      'Authorization': `Bearer ${account.access_token}`,
+    },
+  });
+
+  if (!response.ok) {
+    throw new Error('Failed to fetch user from Strapi');
+  }
+
+  const userData = await response.json();
+  return userData; // This will be the user data from Strapi (new or existing)
+}
+
 async function sendWelcomeEmail(userEmail) {
   const accessToken = await getAccessToken();
   const nodemailer = await import('nodemailer'); // Dynamically import Nodemailer
@@ -92,14 +109,58 @@ const handler = NextAuth({
     async jwt({ token, account, user }) {
       // On initial sign-in, send welcome email
       if (account && user) {
-        // Only send the email on the first sign-in
-        if (!token.emailSent) {
-          await sendWelcomeEmail(user.email);
-          token.emailSent = true; // Mark that the email has been sent
+        //const strapiUserData = await checkIfUserExistsInStrapi(account);
+        //console.log('AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA', strapiUserData)
+        if (account) {
+          // This will only run on the first sign-in
+          try {
+            const response = await fetch(
+              `${process.env.NEXT_PUBLIC_STRAPI_URL}/api/auth/${account.provider}/callback?access_token=${account.access_token}`
+            );
+  
+            if (!response.ok) {
+              throw new Error("Failed to authenticate with Strapi");
+            }
+  
+            const data = await response.json();
+  
+            // Store Strapi JWT and user information in the token
+            token.jwt = data.jwt;
+            token.id = data.user.id;
+            const welcomeEmailSent = data.user.welcomeEmailSent
+            if (!welcomeEmailSent ) {
+              await sendWelcomeEmail(user.email);
+              try{
+                await fetch(`${process.env.NEXT_PUBLIC_STRAPI_URL}/api/users/${data.user.id}`, {
+                method: 'PUT',
+                headers: {
+                  'Authorization': `Bearer ${token.jwt}`,
+                  'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                  welcomeEmailSent: true, // Update the user field to mark email sent
+                }),
+              });
+              }catch (error) {
+                console.error("Welcome email boolean error:", error);
+              }
+              
+    
+              token.emailSent = true; // Update token to avoid multiple calls in this session
+
+            }
+          
+            console.log("USER", data)
+          } catch (error) {
+            console.error("Strapi API error:", error);
+          }
         }
+        console.log(" AAAAAAAAAAAAAAAAAAAAAAAAA This is the token", token)
+        // Only send the email on the first sign-in
         token.accessToken = account.access_token;
         token.refreshToken = account.refresh_token;
-        token.id = user.id;
+        //token.id = user.id;
+        
       }
       return token;
     },
