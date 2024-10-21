@@ -100,7 +100,7 @@ const handler = NextAuth({
   },
   callbacks: {
     async session({ session, token }) {
-      session.accessToken = token.accessToken as string;
+      session.accessToken = token.jwt as string;
       if (session.user) {
         session.user.id = token.id as string;
       }

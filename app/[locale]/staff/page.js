@@ -15,6 +15,7 @@ const ProvidersPage = () => {
       try {
         const response = await axios.get(`${process.env.NEXT_PUBLIC_STRAPI_URL}/api/service-providers?populate[services]=*&populate[zones]=*&populate[reviews]=*&populate[profile_picture]=*`);
         setProviders(response.data.data);
+        console.log("Providers", response.data.data)
       } catch (error) {
         console.error('Error fetching data: ', error);
       }
